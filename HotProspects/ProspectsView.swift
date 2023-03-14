@@ -10,6 +10,7 @@ import CodeScanner
 import UserNotifications
 
 struct ProspectsView: View {
+    
     enum FilterType {
         case none, contacted, uncontacted
     }
@@ -22,6 +23,8 @@ struct ProspectsView: View {
     var body: some View {
         NavigationStack {
             List {
+                
+                // List of contacts
                 ForEach(filteredProspects) { prospect in
                     HStack {
                         prospects.contactIcon(isContacted: prospect.isContacted)
@@ -33,6 +36,8 @@ struct ProspectsView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    
+                    // Performing buttons (Notification, Delete and mark contacted or not)
                     .swipeActions(edge: .leading) {
                         if prospect.isContacted {
                             Button {
@@ -61,6 +66,8 @@ struct ProspectsView: View {
                 .onDelete(perform: prospects.deleteContact(at:))
             }
             .navigationTitle(title)
+            
+            // Scan button
             .toolbar {
                 Button {
                     isShowingScanner = true
@@ -74,6 +81,7 @@ struct ProspectsView: View {
         }
     }
     
+    // Navigation titles
     var title: String {
         switch filter {
         case .none:
@@ -85,6 +93,7 @@ struct ProspectsView: View {
         }
     }
     
+    // Filtering contacts
     var filteredProspects: [Prospect] {
         switch filter {
         case .none:
@@ -96,6 +105,7 @@ struct ProspectsView: View {
         }
     }
     
+    // Scanning method
     func handleScan(result: Result<ScanResult,ScanError>) {
         isShowingScanner = false
         
@@ -113,6 +123,7 @@ struct ProspectsView: View {
         }
     }
     
+    // Performing notifications
     func addNotification(for prospect: Prospect) {
         let center = UNUserNotificationCenter.current()
         
@@ -125,13 +136,10 @@ struct ProspectsView: View {
             var dateComponents = DateComponents()
             dateComponents.hour = 9
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-           
-            
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
             
             center.add(request)
         }
-        
         center.getNotificationSettings { settings in
             if settings.authorizationStatus == .authorized {
                 addRequest()

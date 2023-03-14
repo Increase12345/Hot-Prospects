@@ -13,6 +13,7 @@ struct MeView: View {
     @State private var emailAddress = "iamdjpavlov@gmail.com"
     @State private var qrCode = UIImage()
     
+    // Context and filter for QR Code
     let context = CIContext()
     let filter = CIFilter.qrCodeGenerator()
     
@@ -47,17 +48,18 @@ struct MeView: View {
         }
     }
     
+    // Avoiding bags
     func updateCode() {
         qrCode = generateQRCode(from: "\(name)\n\(emailAddress)")
     }
     
+    // Creaiting QR image
     func generateQRCode(from string: String) -> UIImage {
         filter.message = Data(string.utf8)
         
         if let outputImage = filter.outputImage {
             if let cgimg = context.createCGImage(outputImage, from: outputImage.extent) {
                 return UIImage(cgImage: cgimg)
-                
             }
         }
         
